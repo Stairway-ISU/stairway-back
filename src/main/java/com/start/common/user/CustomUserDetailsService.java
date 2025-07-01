@@ -1,4 +1,4 @@
-package com.start.user;
+package com.start.common.user;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 
