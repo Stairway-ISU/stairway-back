@@ -1,45 +1,43 @@
 package com.start.common.jwt;
 
-//jwt 생성/파싱 담당
-// 비밀 키, 만료 시간, 토큰 생성/파싱 메서드
-
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret}") // 🔐 application.yml에서 비밀 키 로드
+    @Value("${jwt.secret}")
     private String secretKey;
 
     private SecretKey key;
 
-    // ⏱️ Access Token: 1시간
+    // Access Token: 1시간
     private final long accessTokenValidityInMs = 1000L * 60 * 60;
 
-    // ⏱️ Refresh Token: 14일
+    // Refresh Token: 14일
     private final long refreshTokenValidityInMs = 1000L * 60 * 60 * 24 * 14;
 
-    // ✅ WAS 시작 시, secretKey를 디코딩해서 SecretKey로 초기화
     @PostConstruct
     protected void init() {
         byte[] keyBytes = Base64.getDecoder().decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // ✅ Access & Refresh Token을 동시에 생성해서 반환
+    // Access & Refresh Token을 동시에 생성
     public Map<String, String> createToken(String username, String role) {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", generateAccessToken(username, role));
@@ -47,7 +45,7 @@ public class JwtTokenProvider {
         return tokens;
     }
 
-    // ✅ Access Token 생성
+    // Access Token 생성
     public String generateAccessToken(String username, String role) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("role", role);
@@ -63,7 +61,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // ✅ Refresh Token 생성 (role은 넣지 않음)
+    // Refresh Token 생성
     public String generateRefreshToken(String username) {
         Claims claims = Jwts.claims().setSubject(username);
 
@@ -78,33 +76,40 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // ✅ 토큰에서 사용자 이름(주체) 추출
+    // 토큰에서 사용자 이름 추출
     public String getUsernameFromToken(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build()
                     .parseClaimsJws(token).getBody().getSubject();
         } catch (Exception e) {
-            exceptionHandler.handle(e);
+            log.warn("❌ JWT에서 사용자 이름을 추출하지 못했습니다: {}", e.getMessage());
             return null;
         }
     }
 
-    // ✅ 토큰 유효성 검증 (서명, 만료 시간 등 확인)
+    // 인증 객체 반환
+    public Authentication getAuthentication(String token) {
+        String username = getUsernameFromToken(token);
+        UserDetails userDetails = new User(username, "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
+    // 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
+        } catch (JwtException | IllegalArgumentException e) {
+            log.warn("❌ JWT 토큰이 유효하지 않습니다: {}", e.getMessage());
             return false;
         }
     }
 
-    // ✅ HTTP Request 헤더에서 Bearer 토큰 추출
+    // HTTP 요청 헤더에서 Authorization 토큰 추출
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7); // "Bearer " 제거
+            return bearerToken.substring(7);
         }
         return null;
     }
