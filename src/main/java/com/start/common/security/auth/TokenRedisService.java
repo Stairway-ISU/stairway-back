@@ -1,4 +1,4 @@
-package com.start.common.jwt;
+package com.start.common.security.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;

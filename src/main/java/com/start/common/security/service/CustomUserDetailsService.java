@@ -1,6 +1,5 @@
-package com.start.common.jwt;
+package com.start.common.security.service;
 
-import com.start.common.utils.GetUser;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

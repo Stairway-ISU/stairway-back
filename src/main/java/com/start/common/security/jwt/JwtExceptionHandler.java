@@ -1,4 +1,4 @@
-package com.start.common.jwt;
+package com.start.common.security.jwt;
 
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;

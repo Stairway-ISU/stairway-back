@@ -1,5 +1,6 @@
-package com.start.common.jwt;
+package com.start.common.security.auth;
 
+import com.start.common.security.jwt.JwtTokenProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

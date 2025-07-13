@@ -1,6 +1,6 @@
 package com.start.common.config;
 
-import com.start.common.jwt.CustomUserDetailsService;
+import com.start.common.security.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
