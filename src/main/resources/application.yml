@@ -1,20 +1,13 @@
-spring.application.name=start
-
-jwt:
-  secret: fa1acbe22069135dff79f99cc053f9ce3b698834688f33fb36ffd184e8a6ec46
-
 spring:
+  application:
+    name: start
   redis:
     host: localhost
     port: 6379
-#profile ?? : ?? ??? ???? ???? ??
----
-spring:
   profiles:
     active: local
 
----
-spring:
-  profiles:
-    active: dev
 
+
+jwt:
+  secret: fa1acbe22069135dff79f99cc053f9ce3b698834688f33fb36ffd184e8a6ec46

@@ -4,6 +4,7 @@ import com.start.common.security.jwt.JwtTokenProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +32,9 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
-        String token = jwtTokenProvider.createToken(authentication.getName(), List.of("ROLE_USER"));
-        return ResponseEntity.ok(Map.of("token", token));
+        Map<String, String> tokens = jwtTokenProvider.createToken(authentication.getName(), "ROLE_USER");
+        String accessToken = tokens.get("accessToken");
+        return ResponseEntity.ok(Map.of("token", accessToken));
     }
 
     static class LoginRequest {
