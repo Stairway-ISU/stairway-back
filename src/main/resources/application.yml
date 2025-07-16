@@ -3,24 +3,34 @@ spring:
     name: start
 
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mysql://localhost:3306/testdb
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1234
+#    url: jdbc:h2:mem:testdb
+#    driver-class-name: org.h2.Driver
+#    username: sa
+#    password:
 
   jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
     properties:
       hibernate:
+        show-sql: true
         format_sql: true
+    hibernate:
+      ddl-auto: create-drop
+#    hibernate:
+#      ddl-auto: create
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
 
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2-console
   redis:
     host: localhost
     port: 6379

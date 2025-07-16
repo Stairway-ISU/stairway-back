@@ -1,4 +1,9 @@
 package com.start.modules.qna.repository;
 
-public interface QnaRepository {
+
+import com.start.modules.qna.entity.QnaEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface QnaRepository extends JpaRepository<QnaEntity, Long> {
+
 }
