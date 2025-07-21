@@ -1,7 +1,49 @@
 package com.start.common.config;
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import lombok.RequiredArgsConstructor;
+import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
 @Configuration
+@RequiredArgsConstructor
 public class SwaggerConfig {
+
+    private static final String SECURITY_SCHEME_NAME = "Authorization";
+
+    @Bean
+    public OpenAPI openAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("퀸잇 쇼핑몰")
+                        .description("스터디~")
+                        .version("v1.0.0")
+                        .contact(new Contact()
+                                .name("권동휘")
+                                .email("tnqlsdld0222@gmail.com")))
+                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
+                .components(new Components()
+                        .addSecuritySchemes(SECURITY_SCHEME_NAME, new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .description("bearer 자동 삽입")
+                                .bearerFormat("JWT")
+                                .in(SecurityScheme.In.HEADER)
+                                .name(SECURITY_SCHEME_NAME)));
+    }
+
+    @Bean
+    public GroupedOpenApi groupedOpenApi() {
+        return GroupedOpenApi.builder()
+                .group("default")
+                .packagesToScan("com.zipple")
+                .build();
+    }
 }
