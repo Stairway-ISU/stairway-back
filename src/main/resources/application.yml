@@ -1,9 +1,12 @@
+server:
+  port: 8082
+
 spring:
   application:
     name: start
 
   datasource:
-    url: jdbc:mysql://localhost:3306/testdb
+    url: jdbc:mysql://localhost:3300/stair
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 1234
@@ -19,7 +22,7 @@ spring:
         show-sql: true
         format_sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
 #    hibernate:
 #      ddl-auto: create
 #    show-sql: true
